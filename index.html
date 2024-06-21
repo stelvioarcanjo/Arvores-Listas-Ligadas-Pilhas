@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulação de Estruturas de Dados</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+    <h1>Simulação de Estruturas de Dados</h1>
+    
+    <!-- Formulário para Lista Ligada -->
+    <h2>Lista Ligada</h2>
+    <form action="processa.php" method="POST">
+        <input type="hidden" name="estrutura" value="lista_ligada">
+        <input type="text" name="valor" placeholder="Valor">
+        <button type="submit">Inserir</button>
+    </form>
+    
+    <!-- Formulário para Pilha -->
+    <h2>Pilha</h2>
+    <form action="processa.php" method="POST">
+        <input type="hidden" name="estrutura" value="pilha">
+        <input type="text" name="valor" placeholder="Valor">
+        <button type="submit">Empilhar</button>
+        <button type="submit" name="acao" value="desempilhar">Desempilhar</button>
+    </form>
+    
+    <!-- Formulário para Árvore Binária -->
+    <h2>Árvore Binária</h2>
+    <form action="processa.php" method="POST">
+        <input type="hidden" name="estrutura" value="arvore_binaria">
+        <input type="text" name="valor" placeholder="Valor">
+        <button type="submit">Inserir</button>
+    </form>
+    
+    <!-- Visualizar Estruturas -->
+    <h2>Visualizar Estruturas</h2>
+    <form action="processa.php" method="POST">
+        <input type="hidden" name="acao" value="visualizar">
+        <button type="submit">Visualizar Todas as Estruturas</button>
+    </form>
+
+    <!-- Visualizar Árvore Binária com Percursos -->
+    <h2>Visualizar Árvore Binária</h2>
+    <button onclick="visualizarArvore('pre')">Pré-ordem</button>
+    <button onclick="visualizarArvore('in')">Em ordem</button>
+    <button onclick="visualizarArvore('post')">Pós-ordem</button>
+    <div id="arvore-binaria"></div>
+
+    <script>
+        function visualizarArvore(percurso) {
+            fetch('processa.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `acao=visualizar_arvore&percurso=${percurso}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('arvore-binaria').innerHTML = `<p>${data.join(' -> ')}</p>`;
+                desenharArvore(data);
+            });
+        }
+
+        function desenharArvore(data) {
+            // Limpar a visualização anterior
+            d3.select('#arvore-binaria').selectAll('*').remove();
+
+            // Configurar a visualização usando d3.js
+            // Este é um exemplo simples, a visualização real pode variar
+            const width = 500;
+            const height = 500;
+            const svg = d3.select('#arvore-binaria').append('svg')
+                .attr('width', width)
+                .attr('height', height);
+
+            // Adicione código para desenhar a árvore aqui
+            // Este é um exemplo simples de como você pode adicionar nós
+            const nodes = svg.selectAll('circle')
+                .data(data)
+                .enter()
+                .append('circle')
+                .attr('cx', (d, i) => (i + 1) * 50)
+                .attr('cy', height / 2)
+                .attr('r', 20)
+                .attr('fill', 'steelblue');
+
+            const labels = svg.selectAll('text')
+                .data(data)
+                .enter()
+                .append('text')
+                .attr('x', (d, i) => (i + 1) * 50)
+                .attr('y', height / 2 + 5)
+                .attr('text-anchor', 'middle')
+                .attr('fill', 'white')
+                .text(d => d);
+        }
+    </script>
+</body>
+</html>
